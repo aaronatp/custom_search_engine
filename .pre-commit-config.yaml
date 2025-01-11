@@ -1,0 +1,138 @@
+# install the pre-commit hooks:
+#
+#    ❯ pre-commit install --hook-type pre-commit
+#    pre-commit installed at .git/hooks/pre-commit
+#
+#    ❯ pre-commit install --hook-type pre-push
+#    pre-commit installed at .git/hooks/pre-push
+#
+# run all linters liks:
+#
+#    ❯ pre-commit run --all-files
+#    isort....................................................................Passed
+#    black....................................................................Passed
+#    ruff.....................................................................Passed
+#    flake8...................................................................Passed
+#    mypy.....................................................................Passed
+#
+# run a single linter like:
+#
+#    ❯ pre-commit run --all-files isort
+#    isort....................................................................Passed
+
+repos:
+-   repo: local
+    hooks:
+    -   id: isort
+        name: isort
+        stages: [pre-commit, pre-push, manual]
+        language: system
+        entry: isort
+        args:
+        -   "--length-sort"
+        -   "--profile"
+        -   "black"
+        -   "--line-length=120"
+        -   "--skip-glob"
+        -   "cse/"
+        -   "scripts/"
+        -   "tests/"
+        always_run: true
+        pass_filenames: false
+
+-   repo: local
+    hooks:
+    -   id: black
+        name: black
+        stages: [pre-commit, pre-push, manual]
+        language: system
+        entry: black
+        args:
+        -   "--line-length=120"
+        -   "--extend-exclude"
+        -   "cse/"
+        -   "scripts/"
+        -   "tests/"
+        -   "web/rules/scripts/"
+        always_run: true
+        pass_filenames: false
+
+-   repo: local
+    hooks:
+    -   id: ruff
+        name: ruff
+        stages: [pre-commit, pre-push, manual]
+        language: system
+        entry: ruff
+        args:
+        -   "check"
+        -   "--config"
+        -   ".github/ruff.toml"
+        -   "cse/"
+        -   "scripts/"
+        -   "tests/"
+        -   "web/rules/scripts/"
+        always_run: true
+        pass_filenames: false
+
+-   repo: local
+    hooks:
+    -   id: flake8
+        name: flake8
+        stages: [pre-push, manual]
+        language: system
+        entry: flake8
+        args:
+        -   "--config"
+        -   ".github/flake8.ini"
+        -   "--extend-exclude"
+        -   "cse/"
+        -   "scripts/"
+        -   "tests/"
+        always_run: true
+        pass_filenames: false
+
+
+
+-   repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.391
+    hooks:
+    -   id: pyright
+
+-   repo: local
+    hooks:
+    -   id: deptry
+        name: deptry
+        stages: [pre-commit, pre-push, manual]
+        language: system
+        entry: deptry .
+        always_run: true
+        pass_filenames: false
+
+-   repo: local
+    hooks:
+    -   id: pytest-fast
+        name: pytest (fast)
+        stages: [manual]
+        language: system
+        entry: pytest
+        args:
+        -   "tests/"
+        always_run: true
+        pass_filenames: false
+
+-   repo: local
+    hooks:
+    -   id: pytype
+        name: Pytype
+        description: A static type analyzer for Python code.
+        stages: [pre-commit, pre-push, manual]
+        entry: pytype
+        # needs to run in the same virtual environment as the code being checked, therefore
+        # language = system instead of python
+        language: system
+        types: [python]
+        args:
+          - '--jobs=auto'
+          - '--keep-going'
+        files: \.py$

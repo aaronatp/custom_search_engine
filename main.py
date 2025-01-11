@@ -11,13 +11,11 @@ def google_SERP_links(num_results, **params):
     url = "https://customsearch.googleapis.com/customsearch/v1"
 
     links = []
-    for start in range(
-        1, num_results, 10
-    ):  # What happens when num_results is not a multiple of 10?
+    for start in range(1, num_results, 10):
         response = requests.get(
             url,
             params=params | {"start": start},
-        )  # Clean this up
+        )
         data = response.json()
 
         assert "items" in data  # Adjust this if this turns out to be problematic
@@ -47,7 +45,7 @@ def scrape_url_content(url):
                 overall += "\n".join(line for line in lines if line)
             return overall
         else:
-            print(f"Failed to fetch {url}: {response.status_code}")
+            # Log these
             return ""
     except Exception as e:
         print(f"Error fetching {url}: {e}")
@@ -66,23 +64,20 @@ if __name__ == "__main__":
         default=10,
         help="Number of articles to profile",
     )
-    parser.add_argument(
-        "-se",
-        "--search_engine_id",
-        type=str,
-        nargs="?",
-        default="b2d87ae5a9c2e40da",
-        help="Customisable search engine ID",
-    )
     args = parser.parse_args()
 
     if not args.query:
         raise Exception("Please query something")
 
+    if not os.getenv("CSE_SEARCH_ENGINE_ID"):
+        os.environ["CSE_SEARCH_ENGINE_ID"] = (
+            "b2d87ae5a9c2e40da"  # Default custom search engine for this project
+        )
+
     params = {
-        "key": os.getenv("CSE_API_KEY"),
-        "cx": args.search_engine_id,
         "q": args.query,
+        "key": os.getenv("CSE_API_KEY"),
+        "cx": os.getenv("CSE_SEARCH_ENGINE_ID"),
         "cr": "countryUS",
         # Filter by date of articles
     }
@@ -93,6 +88,6 @@ if __name__ == "__main__":
         # text = clean_webpage(raw_text)
         webpages_info[link] = raw_text
         print(link)
-        pprint(raw_text[500:])
+        print(raw_text[500:])
 
     # Do something with webpages_info
