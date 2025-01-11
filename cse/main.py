@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import argparse
 import requests
-import os
 
 from bs4 import BeautifulSoup
 from pprint import pprint
+import os
 
 
 def google_SERP_links(num_results, **params):

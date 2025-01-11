@@ -1,113 +1,34 @@
-# install the pre-commit hooks:
-#
-#    ❯ pre-commit install --hook-type pre-commit
-#    pre-commit installed at .git/hooks/pre-commit
-#
-#    ❯ pre-commit install --hook-type pre-push
-#    pre-commit installed at .git/hooks/pre-push
-#
-# run all linters liks:
-#
-#    ❯ pre-commit run --all-files
-#    isort....................................................................Passed
-#    black....................................................................Passed
-#    ruff.....................................................................Passed
-#    flake8...................................................................Passed
-#    mypy.....................................................................Passed
-#
-# run a single linter like:
-#
-#    ❯ pre-commit run --all-files isort
-#    isort....................................................................Passed
-
 repos:
--   repo: local
-    hooks:
-    -   id: isort
-        name: isort
-        stages: [pre-commit, pre-push, manual]
-        language: system
-        entry: isort
-        args:
-        -   "--length-sort"
-        -   "--profile"
-        -   "black"
-        -   "--line-length=120"
-        -   "--skip-glob"
-        -   "cse/"
-        -   "scripts/"
-        -   "tests/"
-        always_run: true
-        pass_filenames: false
-
--   repo: local
-    hooks:
-    -   id: black
-        name: black
-        stages: [pre-commit, pre-push, manual]
-        language: system
-        entry: black
-        args:
-        -   "--line-length=120"
-        -   "--extend-exclude"
-        -   "cse/"
-        -   "scripts/"
-        -   "tests/"
-        -   "web/rules/scripts/"
-        always_run: true
-        pass_filenames: false
-
--   repo: local
-    hooks:
-    -   id: ruff
-        name: ruff
-        stages: [pre-commit, pre-push, manual]
-        language: system
-        entry: ruff
-        args:
-        -   "check"
-        -   "--config"
-        -   ".github/ruff.toml"
-        -   "cse/"
-        -   "scripts/"
-        -   "tests/"
-        -   "web/rules/scripts/"
-        always_run: true
-        pass_filenames: false
-
--   repo: local
-    hooks:
-    -   id: flake8
-        name: flake8
-        stages: [pre-push, manual]
-        language: system
-        entry: flake8
-        args:
-        -   "--config"
-        -   ".github/flake8.ini"
-        -   "--extend-exclude"
-        -   "cse/"
-        -   "scripts/"
-        -   "tests/"
-        always_run: true
-        pass_filenames: false
-
-
+#-   repo: https://github.com/astral-sh/ruff-pre-commit
+#    rev: v0.8.2
+#    hooks:
+#    -   id: ruff
+#        name: Run Ruff (lint) on cse/
+#        args: [--exit-non-zero-on-fix, --fix]
+#
+#-   repo: https://github.com/psf/black-pre-commit-mirror
+#    rev: 24.10.0
+#    hooks:
+#    -   id: black
+#        name: Run Black on Tools/build/check_warnings.py
+#        language_version: python3.12
+#        args: [--line-length=79]
+#
+#-   repo: https://github.com/pre-commit/pre-commit-hooks
+#    rev: v5.0.0
+#    hooks:
+#    -   id: check-case-conflict
+#    -   id: check-merge-conflict
+#    -   id: check-toml
+#    -   id: check-yaml
+#    -   id: end-of-file-fixer
+#        types: [python]
+#        #types_or: [python]
 
 -   repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.391
     hooks:
     -   id: pyright
-
--   repo: local
-    hooks:
-    -   id: deptry
-        name: deptry
-        stages: [pre-commit, pre-push, manual]
-        language: system
-        entry: deptry .
-        always_run: true
-        pass_filenames: false
 
 -   repo: local
     hooks:
@@ -118,7 +39,6 @@ repos:
         entry: pytest
         args:
         -   "tests/"
-        always_run: true
         pass_filenames: false
 
 -   repo: local

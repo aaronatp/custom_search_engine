@@ -11,3 +11,11 @@ dependencies = []
 # ...
 venvPath = "."
 venv = ".venv"
+
+[dependency-groups]
+dev = [
+    "black>=24.10.0",
+    "deptry>=0.22.0",
+    "isort>=5.13.2",
+    "ruff>=0.9.1",
+]
