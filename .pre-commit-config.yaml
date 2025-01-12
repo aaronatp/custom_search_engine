@@ -4,7 +4,7 @@ repos:
     hooks:
     -   id: ruff
         name: Run Ruff (lint) on cse/
-        stages: [pre-commit, pre-push, manual]
+        stages: [commit, pre-push, manual]
         args: [--exit-non-zero-on-fix, --fix]
 
 -   repo: https://github.com/psf/black-pre-commit-mirror
@@ -12,7 +12,7 @@ repos:
     hooks:
     -   id: black
         name: Run Black on Tools/build/check_warnings.py
-        stages: [pre-commit, pre-push, manual]
+        stages: [commit, pre-push, manual]
         language_version: python3.12
         args: [--line-length=79]
 
@@ -25,14 +25,14 @@ repos:
     -   id: check-yaml
     -   id: end-of-file-fixer
         types: [python]
-        stages: [pre-commit, pre-push, manual]
+        stages: [commit, pre-push, manual]
         #types_or: [python]
 
 -   repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.391
     hooks:
     -   id: pyright
-        stages: [pre-commit, pre-push, manual]
+        stages: [commit, pre-push, manual]
 
 -   repo: local
     hooks:
@@ -50,7 +50,7 @@ repos:
     -   id: pytype
         name: Pytype
         description: A static type analyzer for Python code.
-        stages: [pre-commit, pre-push, manual]
+        stages: [commit, pre-push, manual]
         entry: pytype
         # needs to run in the same virtual environment as the code being checked, therefore
         # language = system instead of python
