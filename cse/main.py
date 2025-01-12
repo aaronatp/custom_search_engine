@@ -3,7 +3,6 @@ import argparse
 import requests
 
 from bs4 import BeautifulSoup
-from pprint import pprint
 import os
 
 
@@ -18,7 +17,9 @@ def google_SERP_links(num_results, **params):
         )
         data = response.json()
 
-        assert "items" in data  # Adjust this if this turns out to be problematic
+        assert (
+            "items" in data
+        )  # Adjust this if this turns out to be problematic
 
         for webpage in data["items"]:
             links.append(webpage["link"])

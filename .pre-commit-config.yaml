@@ -1,34 +1,38 @@
 repos:
-#-   repo: https://github.com/astral-sh/ruff-pre-commit
-#    rev: v0.8.2
-#    hooks:
-#    -   id: ruff
-#        name: Run Ruff (lint) on cse/
-#        args: [--exit-non-zero-on-fix, --fix]
-#
-#-   repo: https://github.com/psf/black-pre-commit-mirror
-#    rev: 24.10.0
-#    hooks:
-#    -   id: black
-#        name: Run Black on Tools/build/check_warnings.py
-#        language_version: python3.12
-#        args: [--line-length=79]
-#
-#-   repo: https://github.com/pre-commit/pre-commit-hooks
-#    rev: v5.0.0
-#    hooks:
-#    -   id: check-case-conflict
-#    -   id: check-merge-conflict
-#    -   id: check-toml
-#    -   id: check-yaml
-#    -   id: end-of-file-fixer
-#        types: [python]
-#        #types_or: [python]
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.2
+    hooks:
+    -   id: ruff
+        name: Run Ruff (lint) on cse/
+        stages: [pre-commit, pre-push, manual]
+        args: [--exit-non-zero-on-fix, --fix]
+
+-   repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.10.0
+    hooks:
+    -   id: black
+        name: Run Black on Tools/build/check_warnings.py
+        stages: [pre-commit, pre-push, manual]
+        language_version: python3.12
+        args: [--line-length=79]
+
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+    -   id: check-case-conflict
+    -   id: check-merge-conflict
+    -   id: check-toml
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+        types: [python]
+        stages: [pre-commit, pre-push, manual]
+        #types_or: [python]
 
 -   repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.391
     hooks:
     -   id: pyright
+        stages: [pre-commit, pre-push, manual]
 
 -   repo: local
     hooks:
