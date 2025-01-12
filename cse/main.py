@@ -1,15 +1,27 @@
 #!/usr/bin/env python3
 import argparse
 import requests
-
 from bs4 import BeautifulSoup
 import os
+from typing import List, Dict, Union
 
 
-def google_SERP_links(num_results, **params):
+def google_SERP_links(
+    num_results: int, **params: Union[str, int]
+) -> List[str]:
+    """
+    Fetch links from Google Search Engine Results Pages (SERPs) using a custom search engine API.
+
+    Args:
+        num_results (int): Number of results to fetch.
+        **params: Additional parameters for the API request.
+
+    Returns:
+        List[str]: A list of URLs retrieved from the search results.
+    """
     url = "https://customsearch.googleapis.com/customsearch/v1"
+    links: List[str] = []
 
-    links = []
     for start in range(1, num_results, 10):
         response = requests.get(
             url,
@@ -19,7 +31,7 @@ def google_SERP_links(num_results, **params):
 
         assert (
             "items" in data
-        )  # Adjust this if this turns out to be problematic
+        ), "The API response does not contain 'items'. Check the API response for issues."
 
         for webpage in data["items"]:
             links.append(webpage["link"])
@@ -27,26 +39,32 @@ def google_SERP_links(num_results, **params):
     return links
 
 
-def scrape_url_content(url):
+def scrape_url_content(url: str) -> str:
+    """
+    Scrape the content of a given URL.
+
+    Args:
+        url (str): The URL to scrape.
+
+    Returns:
+        str: The textual content extracted from the webpage.
+    """
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(url, headers=headers)
+
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
-            # Remove unwanted tags
-            # for script in soup(["script", "style"]):
-            #    script.extract()
-
-            overall = ""
+            overall: str = ""
             bodies = soup.find_all("body")
+
             for body in bodies:
-                # Extract visible text
                 text = body.get_text()
                 lines = (line.strip() for line in text.splitlines())
                 overall += "\n".join(line for line in lines if line)
+
             return overall
         else:
-            # Log these
             return ""
     except Exception as e:
         print(f"Error fetching {url}: {e}")
@@ -68,27 +86,27 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.query:
-        raise Exception("Please query something")
+        raise ValueError(
+            "Please specify a query using the -q or --query argument."
+        )
 
     if not os.getenv("CSE_SEARCH_ENGINE_ID"):
         os.environ["CSE_SEARCH_ENGINE_ID"] = (
             "b2d87ae5a9c2e40da"  # Default custom search engine for this project
         )
 
-    params = {
+    params: Dict[str, Union[str, int]] = {
         "q": args.query,
-        "key": os.getenv("CSE_API_KEY"),
-        "cx": os.getenv("CSE_SEARCH_ENGINE_ID"),
+        "key": os.getenv("CSE_API_KEY", ""),
+        "cx": os.getenv("CSE_SEARCH_ENGINE_ID", ""),
         "cr": "countryUS",
-        # Filter by date of articles
     }
 
-    webpages_info = {}
+    webpages_info: Dict[str, str] = {}
     for link in tqdm.tqdm(google_SERP_links(args.total_pages, **params)):
         raw_text = scrape_url_content(link)
-        # text = clean_webpage(raw_text)
         webpages_info[link] = raw_text
         print(link)
-        print(raw_text[500:])
+        print(raw_text[:500])  # Limit the output to the first 500 characters
 
     # Do something with webpages_info
