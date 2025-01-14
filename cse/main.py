@@ -29,9 +29,9 @@ def google_SERP_links(num_results: int, **params: str | int) -> list[str]:
         # Is best practice simply to write Any or the full, complex structure?
         data = response.json()
 
-        assert "items" in data, (
-            "The API response does not contain 'items'. Check the API response for issues."
-        )
+        assert (
+            "items" in data
+        ), "The API response does not contain 'items'. Check the API response for issues."
 
         for webpage in data["items"]:
             links.append(webpage["link"])
@@ -47,11 +47,15 @@ def fetch_main_content(url: str) -> str:
             soup = BeautifulSoup(response.text, "html.parser")
 
             # Remove unwanted elements
-            for unwanted in soup(["script", "style", "nav", "footer", "aside", "form"]):
+            for unwanted in soup(
+                ["script", "style", "nav", "footer", "aside", "form"]
+            ):
                 unwanted.extract()
 
             # Target main content tags
-            main_content = soup.find("main") or soup.find("article") or soup.body
+            main_content = (
+                soup.find("main") or soup.find("article") or soup.body
+            )
             if main_content:
                 text = main_content.get_text()
                 lines = (line.strip() for line in text.splitlines())
@@ -80,7 +84,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.query:
-        raise ValueError("Please specify a query using the -q or --query argument.")
+        raise ValueError(
+            "Please specify a query using the -q or --query argument."
+        )
 
     if not os.getenv("CSE_SEARCH_ENGINE_ID"):
         os.environ["CSE_SEARCH_ENGINE_ID"] = (
